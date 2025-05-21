@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import workerSrc from 'pdfjs-dist/build/pdf.worker.entry';
 import { Box, Typography, Paper, IconButton, CircularProgress } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
-// Set the worker source
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Set the worker source to the bundled worker
+pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 interface PDFPreviewProps {
   file: File | null;

@@ -10,9 +10,12 @@ export async function addWatermarkToPdf(
   const pdfDoc = await PDFDocument.load(arrayBuffer);
   const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   
-  const pages = options.pages === 'all' 
-    ? pdfDoc.getPages() 
-    : options.pages.map(pageNum => pdfDoc.getPage(pageNum - 1));
+  const totalPages = pdfDoc.getPageCount();
+  const pages = options.pages === 'all'
+    ? pdfDoc.getPages()
+    : options.pages
+        .filter((p) => p >= 1 && p <= totalPages)
+        .map((pageNum) => pdfDoc.getPage(pageNum - 1));
 
   // Parse the color from hex to rgb
   const hexToRgb = (hex: string) => {
