@@ -63,6 +63,19 @@ const WatermarkControls: React.FC<WatermarkControlsProps> = ({
     onOptionsChange({ ...options, color: e.target.value });
   };
 
+  const handlePagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.trim() === '' || value.toLowerCase() === 'all') {
+      onOptionsChange({ ...options, pages: 'all' });
+    } else {
+      const pages = value
+        .split(',')
+        .map((p) => parseInt(p.trim(), 10))
+        .filter((n) => !isNaN(n) && n > 0);
+      onOptionsChange({ ...options, pages });
+    }
+  };
+
   return (
     <Paper sx={{ p: 3, mt: 3 }}>
       <Typography variant="h6" gutterBottom>
@@ -174,6 +187,19 @@ const WatermarkControls: React.FC<WatermarkControlsProps> = ({
               margin="normal"
               variant="outlined"
               InputLabelProps={{ shrink: true }}
+            />
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              label="Pages à traiter (all ou 1,3,5)"
+              value={Array.isArray(options.pages) ? options.pages.join(',') : 'all'}
+              onChange={handlePagesChange}
+              margin="normal"
+              variant="outlined"
             />
           </Box>
         </Grid>

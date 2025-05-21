@@ -59,18 +59,34 @@ function App() {
     };
   }, [files, processedFiles]);
 
-  const handleFilesAdded = useCallback((newFiles: FileWithPreview[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    if (newFiles.length > 0 && !selectedFile) {
-      setSelectedFile(newFiles[0]);
-    }
-    setTabValue(1); // Switch to the Files tab
-    setNotification({
-      open: true,
-      message: `${newFiles.length} fichier(s) ajouté(s) avec succès`,
-      severity: 'success',
-    });
-  }, [selectedFile]);
+  const handleFilesAdded = useCallback(
+    (newFiles: FileWithPreview[]) => {
+      setFiles((prevFiles) => {
+        const uniqueFiles = newFiles.filter(
+          (nf) => !prevFiles.some((pf) => pf.name === nf.name && pf.size === nf.size)
+        );
+        if (uniqueFiles.length > 0 && !selectedFile) {
+          setSelectedFile(uniqueFiles[0]);
+        }
+        if (uniqueFiles.length > 0) {
+          setNotification({
+            open: true,
+            message: `${uniqueFiles.length} fichier(s) ajouté(s) avec succès`,
+            severity: 'success',
+          });
+          setTabValue(1);
+          return [...prevFiles, ...uniqueFiles];
+        }
+        setNotification({
+          open: true,
+          message: 'Fichier(s) déjà présent(s) ignoré(s)',
+          severity: 'info',
+        });
+        return prevFiles;
+      });
+    },
+    [selectedFile]
+  );
 
   const handleRemoveFile = useCallback((id: string) => {
     setFiles((prevFiles) => {
